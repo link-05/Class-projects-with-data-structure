@@ -13,8 +13,7 @@
 
 import java.lang.StringBuilder;
 public class Applicant {
-    private static final int MAX_SKILLS = 3; //constant for max skill
-    private static final int MAX_COMPANIES = 3; //constant for max companies
+    //Members
     private String[] companyName; //An Array that hold prior company names
     //companyName cannot hold more than a max constant count of company
     private String[] applicantSkills; //An Array that holds applicant skills
@@ -24,14 +23,15 @@ public class Applicant {
     private double applicantGPA; //The grade point average of the applicant
     private static int applicantCount = 0; //The amount of applicant created.
 
+    //Constructors
     /**
      * Returns an instance of <code>Applicant</code>.
      */
     public Applicant() {
-        companyName = new String[MAX_COMPANIES];
-        applicantSkills = new String[MAX_SKILLS];
-        applicantName = null;
-        applicantCollege = null;
+        companyName = new String[HiringTable.MAX_COMPANIES];
+        applicantSkills = new String[HiringTable.MAX_SKILLS];
+        applicantName = "";
+        applicantCollege = "";
         applicantGPA = 0.0;
         applicantCount++;
     }
@@ -58,19 +58,21 @@ public class Applicant {
      */
     public Applicant(String[] companyName, String[] applicantSkills,
       double applicantGPA, String applicantName, String applicantCollege) {
-        if (applicantGPA < 0.0) {
-            throw new IllegalArgumentException("Applicant GPA must" +
-              " be a positive number.");
+        try {
+            if (applicantGPA < 0.0 || applicantName == null || applicantName.isEmpty()) {
+                throw new IllegalArgumentException("Applicant GPA must" +
+                  " be a positive number and Applicant must have a name.");
+            }
+            this.companyName = companyName;
+            this.applicantSkills = applicantSkills;
+            this.applicantName = applicantName;
+            this.applicantCollege = applicantCollege;
+            this.applicantGPA = applicantGPA;
+            applicantCount++;
         }
-        if (applicantName == null || applicantName.isEmpty()) {
-            throw new IllegalArgumentException("Applicant must have a name.");
+        catch (Exception IllegalArgumentException) {
+            System.out.println(IllegalArgumentException.getMessage());
         }
-        this.companyName = companyName;
-        this.applicantSkills = applicantSkills;
-        this.applicantName = applicantName;
-        this.applicantCollege = applicantCollege;
-        this.applicantGPA = applicantGPA;
-        applicantCount++;
     }
 
     //Getter Methods
@@ -124,7 +126,7 @@ public class Applicant {
      * @return
      *    Returns the amount of applicants
      */
-    public int getApplicantCount() {
+    public static int getApplicantCount() {
         return applicantCount;
     }
 
@@ -176,10 +178,15 @@ public class Applicant {
      *     Indicate that the <code>applicantGPA</code> is less than zero
      */
     public void setApplicantGPA(double applicantGPA) {
-        if(applicantGPA < 0.0) {
-            throw new IllegalArgumentException("The GPA must be positive.");
+        try {
+            if (applicantGPA < 0.0) {
+                throw new IllegalArgumentException();
+            }
+            this.applicantGPA = applicantGPA;
         }
-        this.applicantGPA = applicantGPA;
+        catch (Exception IllegalArgumentException) {
+            throw new IllegalArgumentException("The GPA must be positive");
+        }
     }
 
     /**
@@ -187,18 +194,23 @@ public class Applicant {
      * @param applicantCount
      *    An int that represents the amount of applicant.
      * <dt> Precondition
-     *    <dd><code>applicantCount</code> must be greater than 0.
+     *    <dd><code>applicantCount</code> must be positive.
      * @exception IllegalArgumentException
-     *    Indicate that the <code>applicantCount</code> is less than one.
+     *    Indicate that the <code>applicantCount</code> is less than zero.
      */
     public void setApplicantCount(int applicantCount) {
-        if(applicantCount < 1) {
-            throw new IllegalArgumentException("The number of applicants must"
-              + "be positive.");
+        try {
+            if (applicantCount < 0) {
+                throw new IllegalArgumentException();
+            }
+            Applicant.applicantCount = applicantCount;
         }
-        this.applicantCount = applicantCount;
+        catch (Exception IllegalArgumentException) {
+            throw new IllegalArgumentException("The number of applicants must be positive.");
+        }
     }
 
+    //Methods
     //clone method
     /**
      * This method will clone an object copy of the Applicant
@@ -234,14 +246,14 @@ public class Applicant {
             //O(n)
             //To avoid calling the getCompanyName method in loop
             String[] thatCompany = thatObject.getCompanyName();
-            for(int i = 0; i < MAX_COMPANIES; i++) {
+            for(int i = 0; i < HiringTable.MAX_COMPANIES; i++) {
                 if(!(this.companyName[i].equals(thatCompany[i]))) {
                     return false;
                 }
             }
             //To avoid calling the getApplicant Skill method in loop
             String[] thatSkills = thatObject.getApplicantSkills();
-            for(int i = 0; i < MAX_SKILLS; i++) {
+            for(int i = 0; i < HiringTable.MAX_SKILLS; i++) {
                 if(!(this.applicantSkills[i].equals(
                   thatSkills[i]))) {
                     return false;
@@ -263,9 +275,8 @@ public class Applicant {
      *    Returns a String with Applicant information
      */
     public String toString() {
-        String[] placeholder = arrayToString();
-        String companyLine = placeholder[0];
-        String skillsLine = placeholder[1];
+        String companyLine = arrayToString(companyName);
+        String skillsLine = arrayToString(applicantSkills);
         return String.format("%-33s%-16s%-11.2f%-17s%-21s",
           companyLine, applicantName, applicantGPA, applicantCollege,
           skillsLine);
@@ -277,39 +288,27 @@ public class Applicant {
     }
 
     /**
-     * Helper method to put the arrays into Strings
+     * Helper method to put the array into String
      * @return
-     *    Returns a string array with first index being the
-     *      <code>companyName</code> and second index being the
-     *      <code>applicantSkills</code> using StringBuilder.
+     *    Returns a string with all index value in a comma separated String
+     *      using StringBuilder.
+     * @param arr
+     *    The array that will be extracted into Strings
      */
-    private String[] arrayToString() {
+    private String arrayToString(String[] arr) {
         StringBuilder builder = new StringBuilder();
-        String[] combinedReturn = new String[2];
-        for(int i = 0; i < MAX_COMPANIES; i++) {
+        for(int i = 0; i < arr.length; i++) {
             String currentCompanyName = this.companyName[i];
             if (currentCompanyName.isEmpty()) {
-                break;
+                continue;
             }
             builder.append(companyName[i]);
             builder.append(", ");
         }
         //Remove the ending comma space while assigning first index to the builder string
-        combinedReturn[1] = builder.toString().substring(
-          0, builder.toString().length() - 2);
-        builder.setLength(0);
-        //Repeat the same action from above
-        for(int i = 0; i < MAX_SKILLS; i++) {
-            String currentSkill = this.applicantSkills[i];
-            if (currentSkill.isEmpty()) {
-                break;
-            }
-            builder.append(applicantSkills[i]);
-            builder.append(", ");
-        }
-        combinedReturn[1] = builder.toString().substring(
-          0, builder.toString().length() - 2);
-        return combinedReturn;
+        String wholeString = builder.toString();
+        return wholeString.substring(
+          0, wholeString.length() - 2);
     }
 
 }
