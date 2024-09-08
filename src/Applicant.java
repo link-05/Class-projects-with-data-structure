@@ -226,7 +226,7 @@ public class Applicant {
             copy = new Applicant(this.companyName, this.applicantSkills,
               this.applicantGPA, this.applicantName, this.applicantCollege);
         } catch (Exception RunTimeException) {
-            RunTimeException.printStackTrace();
+            System.out.println(RunTimeException.getMessage());
         }
         return copy;
     }
@@ -247,15 +247,26 @@ public class Applicant {
             //To avoid calling the getCompanyName method in loop
             String[] thatCompany = thatObject.getCompanyName();
             for(int i = 0; i < HiringTable.MAX_COMPANIES; i++) {
-                if(!(this.companyName[i].equals(thatCompany[i]))) {
+                if(thatCompany[i] != null && this.companyName[i] != null) {
+                    if (!(this.companyName[i].equals(thatCompany[i]))) {
+                        return false;
+                    }
+                } else if(thatCompany[i] == null && this.companyName[i] == null) {
+                    continue;
+                } else {
                     return false;
                 }
             }
             //To avoid calling the getApplicant Skill method in loop
             String[] thatSkills = thatObject.getApplicantSkills();
             for(int i = 0; i < HiringTable.MAX_SKILLS; i++) {
-                if(!(this.applicantSkills[i].equals(
-                  thatSkills[i]))) {
+                if(this.applicantSkills[i] != null && thatSkills[i] != null) {
+                    if (!(this.applicantSkills[i].equals(thatSkills[i]))) {
+                        return false;
+                    }
+                } else if(thatSkills[i] == null && this.applicantSkills[i] == null) {
+                    continue;
+                } else {
                     return false;
                 }
             }
@@ -288,27 +299,31 @@ public class Applicant {
     }
 
     /**
-     * Helper method to put the array into String
+     * Static/Helper method to put the array into String
      * @return
      *    Returns a string with all index value in a comma separated String
      *      using StringBuilder.
      * @param arr
      *    The array that will be extracted into Strings
      */
-    private String arrayToString(String[] arr) {
+    public static String arrayToString(String[] arr) {
         StringBuilder builder = new StringBuilder();
-        for(int i = 0; i < arr.length; i++) {
-            String currentCompanyName = this.companyName[i];
-            if (currentCompanyName.isEmpty()) {
-                continue;
-            }
-            builder.append(companyName[i]);
-            builder.append(", ");
-        }
+        builder.append("");
+	    for (String currentArrStr : arr) {
+		    if (currentArrStr == null || currentArrStr.isEmpty()) {
+			    continue;
+		    }
+		    builder.append(currentArrStr);
+		    builder.append(", ");
+	    }
         //Remove the ending comma space while assigning first index to the builder string
         String wholeString = builder.toString();
-        return wholeString.substring(
-          0, wholeString.length() - 2);
+        if(wholeString.length() > 2) {
+            return wholeString.substring(
+                    0, wholeString.length() - 2);
+        } else {
+            return wholeString;
+        }
     }
 
 }

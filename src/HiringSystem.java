@@ -19,17 +19,19 @@ public class HiringSystem {
     public static Scanner input = new Scanner(System.in);
     private static Boolean quitNotCalled = true;
 
-    /**
+	/**
      * This main method will run the menu-driven application
      */
     public static void main(String[] args) {
+        HiringTable currentTable = new HiringTable();
+        HiringTable backupTable = new HiringTable();
         while (quitNotCalled) {
-            HiringTable currentTable = new HiringTable();
-            displayOption();
+            backupTable.printApplicantTable();
+//            displayOption();
             System.out.print("Please enter a command: ");
             String userCommand = input.nextLine();
             System.out.println(); //Skips a line to maintain format
-            readCommand(userCommand, currentTable);
+            readCommand(userCommand, currentTable, backupTable);
         }
     }
 
@@ -59,29 +61,39 @@ public class HiringSystem {
      * @exception IllegalArgumentException
      *    Indicates the user input an illegal command.
      */
-    public static void readCommand(String command, HiringTable currentTable) {
+    public static void readCommand(String command, HiringTable currentTable,
+      HiringTable backupTable) {
         try {
             if (command.equalsIgnoreCase("A")) {
                 //calls Add Applicant
                 addApplicant(currentTable);
             } else if (command.equalsIgnoreCase("R")) {
                 //calls Remove Applicant
+                removeApplicant(currentTable);
             } else if (command.equalsIgnoreCase("G")) {
                 //calls Get Applicant
+                getApplicants(currentTable);
             } else if (command.equalsIgnoreCase("P")) {
                 //calls Print List
+                printList(currentTable);
             } else if (command.equalsIgnoreCase("RS")) {
                 //calls Refine Search
+                refineSearch(currentTable);
             } else if (command.equalsIgnoreCase("S")) {
                 //calls Size
+                size(currentTable);
             } else if (command.equalsIgnoreCase("B")) {
                 //calls Backup
-            } else if (command.equalsIgnoreCase("Compare Backup")) {
+                backup(currentTable, backupTable);
+            } else if (command.equalsIgnoreCase("CB")) {
                 //calls Compare Backup
-            } else if (command.equalsIgnoreCase("Revert Backup")) {
+                compareBackup(currentTable, backupTable);
+            } else if (command.equalsIgnoreCase("RB")) {
                 //calls Revert Backup
-            } else if (command.equalsIgnoreCase("Quit")) {
+                revertBackup(currentTable, backupTable);
+            } else if (command.equalsIgnoreCase("Q")) {
                 //calls Quit
+                quitNotCalled = false;
             } else {
                 throw new IllegalArgumentException("The command is not " +
                         "part of the list, Please try a different command.");
@@ -140,7 +152,7 @@ public class HiringSystem {
               companyName, applicantSkills, applicantGPA,
               applicantName, applicantCollege));
             System.out.println("Applicant " + applicantName +
-              " has been succcessfully added to the hiring system.\n");
+              " has been successfully added to the hiring system.\n");
         }
         catch (Exception InputMismatchException) {
             if(input.hasNext()) {
@@ -151,4 +163,197 @@ public class HiringSystem {
         }
     }//End of addApplicant
 
+    //removeApplicant Method
+
+    /**
+     * The method will take a name and remove the <code>Applicant</code>
+     *   with the same name from the <code>HiringTable</code>.
+     * @param currentTable
+     *    The <code>HiringTable</code> that is currently being worked with.
+     */
+    public static void removeApplicant(HiringTable currentTable) {
+        try {
+            System.out.print("Enter Applicant Name: ");
+            String applicantName = input.nextLine();
+            System.out.println();
+            currentTable.removeApplicant(applicantName);
+            System.out.println("Applicant " + applicantName +
+              " has been successfully removed from the hiring system.\n");
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * Display information for searched Applicant.
+     * @param currentTable
+     *    The <code>HiringTable</code> that is currently being worked with.
+     * @exception Exception
+     *    <code>getApplicant</code> will indicate when Applicant is not found.
+     */
+    //getApplicant Method
+    public static void getApplicants(HiringTable currentTable) {
+        try {
+            System.out.print("Enter Applicant Name: ");
+            String applicantName = input.nextLine();
+            Applicant foundApplicant = currentTable.getApplicant(applicantName);
+            if (foundApplicant != null) {
+                String companyName = Applicant.arrayToString(
+                        foundApplicant.getCompanyName());
+                String applicantSkills = Applicant.arrayToString(
+                        foundApplicant.getApplicantSkills());
+                System.out.println("Applicant Name: " +
+                        foundApplicant.getApplicantName());
+                System.out.println("Applicant Applying From: " + companyName);
+                System.out.println("Applicant GPA: " +
+                        foundApplicant.getApplicantGPA());
+                System.out.println("Applicant College: " +
+                        foundApplicant.getApplicantCollege());
+                System.out.println("Applicant Skills: " + applicantSkills + "\n");
+            }
+        } catch (Exception e) {
+	        System.out.println(e.getMessage());
+        }
+    }//end of getApplicant
+
+    /**
+     * Prints the <code>HiringTable</code> Applicants in organized format.
+     * @param currentTable
+     *   The <code>HiringTable</code> that is currently being worked with.
+     */
+    public static void printList(HiringTable currentTable) {
+        currentTable.printApplicantTable();
+    }//End of printList
+
+    /**
+     * Method to print a refined search of <code>Applicant</code>
+     *   in <code>HiringTable</code>.
+     * @param currentTable
+     *    The <code>HiringTable</code> that is currently being worked with
+     * @exception Exception
+     *    Exception will be thrown by <code>refineSearch</code> method
+     *      in <code>HiringTable</code> class,
+     *      if <code>HiringTable</code> is not instantiated.
+     */
+    public static void refineSearch(HiringTable currentTable) throws Exception {
+        try {
+            System.out.print("Enter a company to filter for: ");
+            String companyName = input.nextLine();
+            System.out.print("Enter a skill to filter for: ");
+            String applicantSkills = input.nextLine();
+            System.out.print("Enter a college to filter for: ");
+            String applicantCollege = input.nextLine();
+            System.out.print("Enter the minimum GPA to filter for:");
+            String applicantGPAString = input.nextLine();
+            double applicantGPA;
+            if(applicantGPAString.isEmpty()) {
+                applicantGPA = 0.0;
+            } else {
+                applicantGPA = Double.parseDouble(applicantGPAString);
+            }
+            System.out.println();
+            HiringTable.refineSearch(currentTable, companyName, applicantSkills, applicantCollege, applicantGPA);
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * Prints the number of applicants in this <code>HiringTable</code>.
+     * @param currentTable
+     *    The <code>HiringTable</code> that is currently being worked with.
+     */
+    public static void size(HiringTable currentTable) {
+        System.out.println("There are " + currentTable.size() +
+          " applicants in the hiring system.");
+    }
+
+    /**
+     * Create a backup of <code>HiringTable</code> <code>currentTable</code>
+     * object.
+     * @param currentTable
+     *    The <code>hiringTable</code> that is currently being worked with.
+     * @exception Exception
+     *    Indicates <code>getData</code> method from <code>HiringTable</code>
+     *      is getting from <code>HiringTable</code> that is not instantiated.
+     */
+    public static void backup(HiringTable currentTable, HiringTable backupTable) {
+        try {
+            HiringTable tempBackupTable = (HiringTable) currentTable.clone();
+            backupTable.setData(tempBackupTable.getData());
+            backupTable.setApplicantCounter(tempBackupTable.size());
+            System.out.println("Successfully created backup.");
+            backupTable.printApplicantTable();
+            System.out.println();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * Compares and prints if the two <code>HiringTable</code> are equal.
+     * @param currentTable
+     *    The <code>hiringTable</code> that is currently being worked with.
+     * @param backupTable
+     *    The <code>hiringTable</code> that is stored in backup.
+     * @exception Exception
+     *    Indicates <code>getData</code> method from <code>HiringTable</code>
+     *      is getting from <code>HiringTable</code> that is not instantiated.
+     */
+    public static void compareBackup(HiringTable currentTable, HiringTable backupTable) {
+        try {
+            Applicant[] currentList = currentTable.getData();
+            Applicant[] backupList = backupTable.getData();
+            backupTable.printApplicantTable();
+            for(int i = 0; i < HiringTable.MAX_APPLICANTS; i++) {
+                if(currentList[i] == null && backupList[i] == null) {
+                    continue;
+                }
+                if (currentList[i] == null && backupList[i] != null ||
+                  currentList[i] != null && backupList[i] == null ||
+                  !(currentList[i].equals(backupList[i]))) {
+                    System.out.println(i);
+                    System.out.println(currentList[i]);
+                    System.out.println(backupList[i]);
+                    System.out.println("Current list is not the same as"
+                      + " the backup copy");
+                    System.out.println();
+                    System.out.println();
+                    return;
+                }
+            }
+            System.out.println("Current list is the same as the backup copy.");
+            System.out.println();
+            System.out.println();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * Reverts <code>currentTable</code> to <code>backupTable</code>.
+     * @param currentTable
+     *    The <code>hiringTable</code> that is currently being worked with.
+     * @param backupTable
+     *    The <code>hiringTable</code> that is stored in backup.
+     * @exception Exception
+     *    Indicates <code>getData</code> method from <code>HiringTable</code>
+     *      is getting from <code>HiringTable</code> that is not instantiated.
+     */
+    public static void revertBackup(HiringTable currentTable, HiringTable backupTable) {
+        try {
+            HiringTable tempCurrentTable = (HiringTable) backupTable.clone();
+            currentTable.setData(tempCurrentTable.getData());
+            currentTable.setApplicantCounter(tempCurrentTable.size());
+            System.out.println("Successfully reverted to the backup copy.");
+            System.out.println();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }

@@ -35,13 +35,16 @@ public class HiringTable {
 	 * return an instance of <code>HiringTable</code> object
 	 *   with a data set to another data.
 	 * @param data
-	 *    The <Applicant> array that data will be set to.
+	 *    The <code>Applicant</code> array that data will be set to.
 	 *      Used for clone method.
+	 * @param applicantCounter
+	 *    The counter for the amount of <code>Applicant</code> object.
 	 * <dt> Post condition:
 	 * 	  <dd><code>data</code> will have a list of <code>Applicant</code>.
 	 */
-	public HiringTable(Applicant[] data) {
+	public HiringTable(Applicant[] data, int applicantCounter) {
 		this.data = data;
+		this.applicantCounter = applicantCounter;
 	}
 
 	//Getter Method
@@ -57,11 +60,29 @@ public class HiringTable {
 	 * @exception Exception
 	 *    Indicates that the <code>HiringTable</code> is not instantiated yet.
 	 */
-	private Applicant[] getData() throws Exception {
+	public Applicant[] getData() throws Exception {
 		if(data == null) {
 			throw new Exception("Hiring Table is not instantiated");
 		}
 		return data;
+	}
+
+	/**
+	 * Sets the <code>data</code> of <code>HiringTable</code>.
+	 * @param data
+	 *    The <code>Applicant</code> array that will be input.
+	 */
+	public void setData(Applicant[] data) {
+		this.data = data;
+	}
+
+	/**
+	 * Sets the <code>applicantCounter</code> of <code>HiringTable</code>.
+	 * @param applicantCounter
+	 *    The number of <code>Applicant</code> in the <code>data</code>.
+	 */
+	public void setApplicantCounter(int applicantCounter) {
+		this.applicantCounter = applicantCounter;
 	}
 
 	//Methods
@@ -109,6 +130,8 @@ public class HiringTable {
 		}
 	}
 
+
+
 	/**
 	 * The applicant with the name will be removed and all applicant
 	 *   in the list will be pushed down one index.
@@ -146,21 +169,13 @@ public class HiringTable {
 	 *       ApplicantNotFoundException.
 	 */
 	public Applicant getApplicant(String name) throws Exception {
-		try {
-			int indexOfNameInList = indexOfApplicant(name);
-			if (indexOfNameInList >= 0) {
-				return data[indexOfNameInList];
-			} else {
-				throw new Exception("Applicant is not found");
-			}
+		int indexOfNameInList = indexOfApplicant(name);
+		if (indexOfNameInList >= 0) {
+			return data[indexOfNameInList];
+		} else {
+			throw new Exception("Applicant is not found");
 		}
-		catch(Exception e) {
-			System.out.println(e.getMessage());
-		}
-		return null;
 	}
-
-
 
 	/**
 	 * Prints out the Applicants matching the refined search
@@ -186,11 +201,12 @@ public class HiringTable {
 	  String skill, String college, double GPA) throws Exception {
 		Applicant[] otherData = table.getData();
 		printHeading();
-		System.out.println();
-		for(Applicant current: otherData) {
+		for(int i = otherData.length - 1; i >= 0; i--) {
+			Applicant current = otherData[i];
+			if(current == null) continue;
 			if(listFitSearch(current.getCompanyName(), company)) {
 				if(listFitSearch(current.getApplicantSkills(), skill)) {
-					if(college.isEmpty() || current.getApplicantCollege().equals(college)) {
+					if(college.isEmpty() || current.getApplicantCollege().equalsIgnoreCase(college)) {
 						if(current.getApplicantGPA() >= GPA) {
 							System.out.println(current);
 						}
@@ -213,9 +229,12 @@ public class HiringTable {
 		try {
 			Applicant[] copyOfData = new Applicant[data.length];
 			for(int i = 0; i < data.length; i++) {
-				copyOfData[i] = (Applicant) data[i].clone();
+				if(data[i] != null) {
+					copyOfData[i] = (Applicant) data[i].clone();
+				}
 			}
-			copyOfHiringTable = new HiringTable(copyOfData);
+			copyOfHiringTable = new HiringTable(copyOfData, applicantCounter);
+			return copyOfHiringTable;
 		} catch (Exception RunTimeException) {
 			RunTimeException.printStackTrace();
 		}
@@ -249,7 +268,7 @@ public class HiringTable {
 			if(data[i] == null) {
 				return -1;
 			}
-			if (name.equals(data[i].getApplicantName())) {
+			if (name.equalsIgnoreCase(data[i].getApplicantName())) {
 				return i;
 			}
 		}
@@ -271,6 +290,7 @@ public class HiringTable {
 			return true;
 		}
 		for(String partOfList: list) {
+			if(partOfList == null) continue;
 			if(partOfList.equalsIgnoreCase(criteria)) {
 				return true;
 			}
@@ -287,7 +307,8 @@ public class HiringTable {
 				"Skills");
 		System.out.println(title);
 		for(int i = 0; i < 98; i++) {
-			System.out.println("-");
+			System.out.print("-");
 		}
+		System.out.println();
 	}
 }
