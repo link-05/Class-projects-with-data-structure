@@ -284,7 +284,6 @@ public class HiringSystem {
             backupTable.setData(tempBackupTable.getData());
             backupTable.setApplicantCounter(tempBackupTable.size());
             System.out.println("Successfully created backup.");
-            backupTable.printApplicantTable();
             System.out.println();
         }
         catch (Exception e) {
