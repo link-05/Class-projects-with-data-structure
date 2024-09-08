@@ -26,8 +26,7 @@ public class HiringSystem {
         HiringTable currentTable = new HiringTable();
         HiringTable backupTable = new HiringTable();
         while (quitNotCalled) {
-            backupTable.printApplicantTable();
-//            displayOption();
+            displayOption();
             System.out.print("Please enter a command: ");
             String userCommand = input.nextLine();
             System.out.println(); //Skips a line to maintain format
@@ -307,7 +306,6 @@ public class HiringSystem {
         try {
             Applicant[] currentList = currentTable.getData();
             Applicant[] backupList = backupTable.getData();
-            backupTable.printApplicantTable();
             for(int i = 0; i < HiringTable.MAX_APPLICANTS; i++) {
                 if(currentList[i] == null && backupList[i] == null) {
                     continue;
