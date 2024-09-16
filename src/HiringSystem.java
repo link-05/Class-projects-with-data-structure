@@ -313,8 +313,6 @@ public class HiringSystem {
                   currentList[i] != null && backupList[i] == null ||
                   !(currentList[i].equals(backupList[i]))) {
                     System.out.println(i);
-                    System.out.println(currentList[i]);
-                    System.out.println(backupList[i]);
                     System.out.println("Current list is not the same as"
                       + " the backup copy");
                     System.out.println();

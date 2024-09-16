@@ -113,7 +113,7 @@ public class HiringTable {
 	public void addApplicant(Applicant newApplicant) {
 		try {
 			if (newApplicant != null && applicantCounter < MAX_APPLICANTS) {
-				for (int i = MAX_APPLICANTS - 1; i >= 0; i--) {
+				for (int i = 0; i < MAX_APPLICANTS; i++) {
 					if (data[i] == null) {
 						applicantCounter++;
 						//Adds to the end of the list.
@@ -144,13 +144,14 @@ public class HiringTable {
 	public void removeApplicant(String name) throws Exception {
 		int indexOfNameInList = indexOfApplicant(name);
 		if (indexOfNameInList >= 0) {
-			data[indexOfNameInList] = null;
-			Applicant holder = data[MAX_APPLICANTS - 1];
-			for(int endPointer = MAX_APPLICANTS - 1; endPointer > indexOfNameInList; endPointer--) {
-				Applicant temporaryHolder = data[endPointer - 1];
-				data[endPointer - 1] = holder;
-				data[endPointer] = null;
-				holder = temporaryHolder;
+			for(int pointer = indexOfNameInList; pointer < MAX_APPLICANTS - 1; pointer++) {
+				if(data[pointer] != null) {
+					data[pointer] = null;//current applicant removed
+					Applicant temporaryHolder = data[pointer + 1]; //Applicant on the right
+					data[pointer] = temporaryHolder; //current equals applicant on the right
+				} else {
+					break;
+				}
 			}
 		} else {
 			throw new Exception("Applicant is not found");
@@ -201,13 +202,12 @@ public class HiringTable {
 	  String skill, String college, double GPA) throws Exception {
 		Applicant[] otherData = table.getData();
 		printHeading();
-		for(int i = otherData.length - 1; i >= 0; i--) {
-			Applicant current = otherData[i];
-			if(current == null) continue;
-			if(listFitSearch(current.getCompanyName(), company)) {
-				if(listFitSearch(current.getApplicantSkills(), skill)) {
-					if(college.isEmpty() || current.getApplicantCollege().equalsIgnoreCase(college)) {
-						if(current.getApplicantGPA() >= GPA) {
+		for (Applicant current : otherData) {
+			if (current == null) continue;
+			if (listFitSearch(current.getCompanyName(), company)) {
+				if (listFitSearch(current.getApplicantSkills(), skill)) {
+					if (college.isEmpty() || current.getApplicantCollege().equalsIgnoreCase(college)) {
+						if (current.getApplicantGPA() >= GPA) {
 							System.out.println(current);
 						}
 					}
@@ -246,9 +246,9 @@ public class HiringTable {
 	 */
 	public void printApplicantTable() {
 		printHeading();
-		for(int i = data.length - 1; i >= 0; i--) {
-			if(data[i] != null) {
-				System.out.println(data[i]);
+		for (Applicant partOfData : data) {
+			if (partOfData != null) {
+				System.out.println(partOfData);
 			}
 			else {
 				break;
@@ -264,7 +264,7 @@ public class HiringTable {
 	 *    Returns index value if found, otherwise -1.
 	 */
 	private int indexOfApplicant(String name) {
-		for(int i = MAX_APPLICANTS - 1; i >= 0; i--) {
+		for(int i = 0; i < MAX_APPLICANTS; i++) {
 			if(data[i] == null) {
 				return -1;
 			}

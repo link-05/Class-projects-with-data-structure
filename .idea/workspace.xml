@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="30b65f66-0070-4f30-bcd1-ed50eef2236d" name="Changes" comment="Finished hw1 after ~4-6 hour since last commit">
+    <list default="true" id="30b65f66-0070-4f30-bcd1-ed50eef2236d" name="Changes" comment="Refactored code to iterate forward instead of backwards">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HiringSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/HiringSystem.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HiringTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/HiringTable.java" afterDir="false" />
@@ -48,23 +48,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.HiringSystem.executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.HiringSystem.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -84,7 +84,14 @@
       <workItem from="1724815778834" duration="33787000" />
       <workItem from="1725364714359" duration="33911000" />
       <workItem from="1725735487509" duration="29327000" />
-      <workItem from="1725778292888" duration="4575000" />
+      <workItem from="1725778292888" duration="5524000" />
+      <workItem from="1725830124500" duration="2000" />
+      <workItem from="1725971375408" duration="22000" />
+      <workItem from="1725971760960" duration="44000" />
+      <workItem from="1725971876520" duration="65000" />
+      <workItem from="1726026022126" duration="739000" />
+      <workItem from="1726419662483" duration="13000" />
+      <workItem from="1726419710939" duration="19000" />
     </task>
     <task id="LOCAL-00001" summary="Created the outline for hw1">
       <option name="closed" value="true" />
@@ -150,7 +157,15 @@
       <option name="project" value="LOCAL" />
       <updated>1725826407931</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Refactored code to iterate forward instead of backwards">
+      <option name="closed" value="true" />
+      <created>1725829351736</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1725829351736</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -162,6 +177,7 @@
     <MESSAGE value="Finished implementing the HiringTable class (Not debugged)" />
     <MESSAGE value="Currently working on the HiringSystem." />
     <MESSAGE value="Finished hw1 after ~4-6 hour since last commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished hw1 after ~4-6 hour since last commit" />
+    <MESSAGE value="Refactored code to iterate forward instead of backwards" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactored code to iterate forward instead of backwards" />
   </component>
 </project>
