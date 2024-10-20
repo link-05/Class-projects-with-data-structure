@@ -16,7 +16,7 @@ import java.lang.StringBuilder;
 
 public class KeyTable {
 	private char[][] key;
-	private static final int MATRIX_SIZE = 5;
+	public static final int MATRIX_SIZE = 5;
 
 	/**
 	 * Returns an instance of <code>KeyTable</code>.
@@ -46,10 +46,7 @@ public class KeyTable {
 		if (!phrase.isEmpty()) {
 			phrase = phrase.toUpperCase();
 			//Replaces all the J with I
-			while(str.indexOf("J") != -1) {
-				str.setCharAt(phrase.indexOf("J"), 'I');
-			}
-			//Go through the phrase and add the character to the string while
+			phrase = phrase.replaceAll("\\s", "").replace("J", "I");
 			//removing the duplicates and the character from the abc string.
 			for (int i = 0; i < phrase.length(); i++) {
 				String current = phrase.substring(i, i + 1);
@@ -90,7 +87,7 @@ public class KeyTable {
 	 *   The row that the character is in.
 	 */
 	public int findRow(char c) {
-		if(isValidChar(c)) {
+		if(!isValidChar(c)) {
 			throw new IllegalArgumentException("Character c is not valid.");
 		}
 		for(int row = 0; row < key.length; row++) {
@@ -115,7 +112,7 @@ public class KeyTable {
 	 *   The column that the character is in.
 	 */
 	public int findCol(char c) {
-		if(isValidChar(c)) {
+		if(!isValidChar(c)) {
 			throw new IllegalArgumentException("Character c is not valid.");
 		}
 		for(int row = 0; row < key.length; row++) {
@@ -157,5 +154,15 @@ public class KeyTable {
 	 */
 	private static boolean isValidChar(char c) {
 		return "ABCDEFGHIKLMNOPQRSTUVWXYZ".indexOf(Character.toUpperCase(c)) != -1;
+	}
+
+	/**
+	 * Sets the key so that it can be changed with <code>changeKey</code>
+	 *   method in <code>PlayFairEncryptionEngine</code>.
+	 * @param key
+	 *    The key that will be set.
+	 */
+	public void setKeyTable(char[][] key) {
+		this.key = key;
 	}
 }

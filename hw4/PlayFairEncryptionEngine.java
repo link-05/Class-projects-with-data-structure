@@ -27,8 +27,6 @@ public class PlayFairEncryptionEngine {
 			printMenu();
 			commandHub(currentKey);
 		}
-
-
 	}
 
 	/**
@@ -51,10 +49,10 @@ public class PlayFairEncryptionEngine {
 				printKey(currentKey);
 				break;
 			case "EN":
-				encrypt();
+				encrypt(currentKey);
 				break;
 			case "DE":
-				decrypt();
+				decrypt(currentKey);
 				break;
 			case "Q":
 				System.out.println("Program terminating...");
@@ -68,15 +66,16 @@ public class PlayFairEncryptionEngine {
 	 * @param currentKey
 	 *    The current <code>KeyTable</code> that will be changed.
 	 */
-	public static void changeKey(KeyTable currentKey) {
+	public static KeyTable changeKey(KeyTable currentKey) {
 		try {
 			System.out.print("Enter key phrase: ");
-			currentKey = KeyTable.buildFromString(input.nextLine());
+			currentKey.setKeyTable(KeyTable.buildFromString(input.nextLine()).getKeyTable());
 			System.out.println("Generation success!");
+			return currentKey;
 		} catch (IllegalArgumentException e) {
 			System.out.println(e.getMessage());
 		}
-
+		return currentKey;
 	}
 
 	/**
@@ -86,6 +85,37 @@ public class PlayFairEncryptionEngine {
 	 */
 	public static void printKey(KeyTable currentKey) {
 		System.out.println(currentKey.toString());
+	}
+
+	/**
+	 * Helper method to encrypt the phrase.
+	 * @param currentKey
+	 *    The current <code>KeyTable</code> that will be used to encrypt.
+	 */
+	public static void encrypt(KeyTable currentKey) {
+		System.out.print("Please enter a phrase to encrypt: ");
+		Phrase encPhrase = Phrase.buildPhraseFromString(input.nextLine());
+		try {
+			Phrase encrypted = encPhrase.encrypt(currentKey);
+			System.out.println("Encrypted text is: " + encrypted.toString());
+		} catch (IllegalArgumentException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
+	/**
+	 * Helper method to decrypt the phrase.
+	 * @param currentKey
+	 *    The current <code>KeyTable</code> that will be used to decrypt.
+	 */
+	public static void decrypt(KeyTable currentKey) {
+		System.out.print("Please enter a phrase to decrypt: ");
+		Phrase decPhrase = Phrase.buildPhraseFromString(input.nextLine());
+		try {
+			System.out.println("Decrypted text is: " + decPhrase.decrypt(currentKey).toString());
+		} catch (IllegalArgumentException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 }
