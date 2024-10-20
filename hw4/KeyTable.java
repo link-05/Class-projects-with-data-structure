@@ -49,10 +49,12 @@ public class KeyTable {
 			phrase = phrase.replaceAll("\\s", "").replace("J", "I");
 			//removing the duplicates and the character from the abc string.
 			for (int i = 0; i < phrase.length(); i++) {
-				String current = phrase.substring(i, i + 1);
-				if (str.indexOf(current) == -1) {
-					str.append(current);
-					abc.deleteCharAt(abc.indexOf(current));
+				if(Character.isLetter(phrase.charAt(i))) {
+					String current = phrase.substring(i, i + 1);
+					if (str.indexOf(current) == -1) {
+						str.append(current);
+						abc.deleteCharAt(abc.indexOf(current));
+					}
 				}
 			}
 		}

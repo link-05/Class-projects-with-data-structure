@@ -1,5 +1,5 @@
 /**
- * The <code>PlayFairEncryptionEngine</code> class will implement
+ * The <code>PlayfairEncryptionEngine</code> class will implement
  *   the menu-driven application for the encryption and decryption.
  *
  * @author Kevin Lin
@@ -13,7 +13,7 @@
 import java.util.Scanner;
 
 
-public class PlayFairEncryptionEngine {
+public class PlayfairEncryptionEngine {
 	private static Scanner input = new Scanner(System.in);
 	private static boolean isRunning = true;
 
