@@ -1,3 +1,4 @@
+package src;
 /**
  * The <code>HiringTable</code> class will hold the list
  * and implement all the functions for an

@@ -1,3 +1,4 @@
+package src;
 import java.util.Stack;
 /**
  * The <code>Block</code> class implements an object
@@ -26,9 +27,9 @@ public class Block {
 	/**
 	 * Adds a <code>Variable</code> into <code>content</code>
 	 * @param var
-	 *    The <code>variable</code> that will be added.
+	 *    The <code>Variable</code> that will be added.
 	 * <dt> Precondition:
-	 *    <dd> There is no more than 10 variables in the stack.
+	 *    <dd> There is no more than 10 Variables in the stack.
 	 * @throws IllegalArgumentException
 	 *    Indicates the block is full.
 	 */
@@ -45,13 +46,13 @@ public class Block {
 	}
 
 	/**
-	 * Print all the variables for the entire <code>Block</code>.
+	 * Print all the Variables for the entire <code>Block</code>.
 	 *   Display each Variable's <code>name</code> and <code>initialValue</code>.
 	 */
 	public void printBlock() {
 		//The tabs are to pass the test case.
 		if(content[0] == null) {
-			System.out.println("No local variables to print.");
+			System.out.println("No local Variables to print.");
 			return;
 		}
 		System.out.printf("%-20s%-20s%n", "Variable Name", "Initial Value");
@@ -66,9 +67,9 @@ public class Block {
 	}
 
 	/**
-	 * Returns the single variable from the block.
+	 * Returns the single Variable from the block.
 	 * @param target
-	 *   The name of the variable to be looked for.
+	 *   The name of the Variable to be looked for.
 	 * @return
 	 *   The <code>Variable</code> object that was found, else null.
 	 */

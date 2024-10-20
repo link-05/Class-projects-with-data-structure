@@ -1,3 +1,5 @@
+package src;
+
 /**
  * The <code>Variable</code> class implements an object
  *   representing the variables in the blocks.

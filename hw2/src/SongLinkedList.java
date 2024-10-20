@@ -1,7 +1,9 @@
+package src;
 import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.StringBuilder;
+
 
 /**
  * The <code>SongLinkedList</code> class implements an object
@@ -71,7 +73,7 @@ public class SongLinkedList {
 			}
 			String songName = temp.getData().getName();
 			AudioInputStream AIS = AudioSystem.getAudioInputStream(
-					new File(/*"src/songs/" +*/ songName + ".wav"));
+					new File("hw2/src/songs/" + songName + ".wav"));
 			//starting the clip
 			c = AudioSystem.getClip();
 			c.open(AIS);

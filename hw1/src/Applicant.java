@@ -1,3 +1,4 @@
+package src;
 /**
  * The <code>Applicant</code> class implements an object
  * with all the information regarding an applicant.

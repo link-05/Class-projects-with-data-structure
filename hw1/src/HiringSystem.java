@@ -1,3 +1,4 @@
+package src;
 /**
  * The <code>HiringSystem</code> class will function as a menu-driven
  * application that will create the <code>HiringTable</code> object

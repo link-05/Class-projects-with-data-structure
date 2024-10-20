@@ -12,6 +12,7 @@
  *    Recitation: R04
  *    TA's: Veronica Oreshko, Anuj Sureshbhai
  */
+package src;
 import java.io.*;
 import java.util.Scanner;
 import java.util.Stack;
@@ -30,7 +31,7 @@ public class BlockTracer {
 			Stack<Block> stack = new Stack<>();
 			Scanner in = new Scanner(System.in);
 			System.out.print("Enter C program filename: ");
-			FileInputStream fis = new FileInputStream(in.nextLine());
+			FileInputStream fis = new FileInputStream("hw3/src/" + in.nextLine() + ".txt");
 			InputStreamReader inStream = new InputStreamReader(fis);
 			BufferedReader stdin = new BufferedReader(inStream);
 			//The test case fails if there isn't this new line.

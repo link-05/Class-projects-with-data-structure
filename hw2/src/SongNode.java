@@ -1,3 +1,4 @@
+package src;
 /**
  * The <code>SongNode</code> class implements an object
  *   representing the node in a Linked List which in
