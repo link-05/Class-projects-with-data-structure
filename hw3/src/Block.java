@@ -54,11 +54,11 @@ public class Block {
 			System.out.println("No local variables to print.");
 			return;
 		}
-		System.out.print("Variable Name\t" + "Initial Value\n");
+		System.out.printf("%-20s%-20s%n", "Variable Name", "Initial Value");
 		for(Variable var: content) {
 			if(var != null) {
-				System.out.print(var.getName()+ "\t\t" +
-				  "        " + var.getInitialValue() + "\n");
+				System.out.printf("%-20s%-20s%n", var.getName(),
+				  var.getInitialValue());
 			} else {
 				break;
 			}

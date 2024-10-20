@@ -153,8 +153,8 @@ public class BlockTracer {
 			Variable v = b.getSingleVar(variable);
 			if (v != null) {
 				//the tabs are to pass the test case regarding spacing
-				System.out.print("Variable Name\t" + "Initial Value\n");
-				System.out.print(v.getName() + "\t\t" + "        " + v.getInitialValue() + "\n");
+				System.out.printf("%-20s%-20s%n", "Variable Name", "Initial Value");
+				System.out.printf("%-20s%-20s%n", v.getName(), v.getInitialValue());
 				found = true;
 				break;
 			}
