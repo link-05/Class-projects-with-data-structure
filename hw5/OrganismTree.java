@@ -22,7 +22,6 @@ public class OrganismTree {
 	//Scanner to use - needed because of special case having AC as an input
 	//but the method needs parameters so changing parameter in the method
 	// is the only way other than checking.
-	private static Scanner in = new Scanner(System.in);
 
 	/**
 	 * Returns an instance of the tree with the <code>apexPredator</code>.
@@ -328,30 +327,13 @@ public class OrganismTree {
 			throw new PyramidExceptions.DietMismatchException();
 		}
 		if(cursor.getLeft() != null && cursor.getMiddle() != null &&
-				cursor.getRight() != null)
+				cursor.getRight() != null) {
 			throw new PyramidExceptions.PositionNotAvailableException();
+		}
+		OrganismNode temp = new OrganismNode(name, false, isHerbivore, isCarnivore);
 		//Need to do this here due to special test cases 1,2, and 5 which will cause problem
 		//if it is not checked first and instead asked for parameter value of name, isHerbivore,
 		// and isCarnivore first.
-		System.out.print("What is the name of the organism?: ");
-		name = in.nextLine().toLowerCase();
-		System.out.print(
-				"Is the organism an herbivore / a carnivore / an omnivore? (H / C / O) : ");
-		String diet = in.nextLine().toUpperCase();
-		OrganismNode temp = new OrganismNode(name,false, false, false);
-		switch (diet) {
-			case "H":
-				temp.setIsHerbivore(true);
-				break;
-			case "C":
-				temp.setIsCarnivore(true);
-				break;
-			case "O":
-				temp.setIsHerbivore(true);
-				temp.setIsCarnivore(true);
-				break;
-		}
-
 		//If empty, set child to temp, otherwise test if the name of it matches existing
 		//if no, continue until finding an empty otherwise throw exception.
 		if(cursor.getLeft() == null) {
@@ -370,7 +352,7 @@ public class OrganismTree {
 			throw new IllegalArgumentException(
 			  "\nERROR: This prey already exists for this predator");
 		}
-		System.out.println("\nA(n) " + name +
+		System.out.println("A(n) " + temp.getName() +
 		  " has successfully been added as prey for the " + cursor.getName() + "!");
 	}
 
@@ -396,8 +378,6 @@ public class OrganismTree {
 		if(cursor.getIsPlant()) {
 			throw new PyramidExceptions.IsPlantException();
 		}
-		System.out.print("What is the name of the organism? ");
-		name = in.nextLine().toLowerCase();
 		//true is the condition for isPlant and false is the condition for type of eater.
 		OrganismNode temp = new OrganismNode(name, true, false, false);
 		//If empty, set child to temp, otherwise test if the name of it matches existing
@@ -422,7 +402,7 @@ public class OrganismTree {
 		} else {
 			throw new PyramidExceptions.PositionNotAvailableException();
 		}
-		System.out.println("\n" + name +
+		System.out.println(temp.getName() +
 		  " has successfully been added as prey for the " + cursor.getName() + "!");
 	}
 

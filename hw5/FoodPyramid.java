@@ -134,9 +134,15 @@ public class FoodPyramid {
 	 *   The <code>FoodPyramid</code> that is being worked with.
 	 */
 	private static void createPlantChild(FoodPyramid base) {
-		System.out.print("What is the name of the organism? ");
-		String plantName = in.nextLine().toLowerCase();
 		try {
+			//Had to add this because of test case not entering anything after
+			//PC for plant organism
+			if(base.getTree().getCursor().getIsPlant()) {
+				base.getTree().addPlantChild(" ");
+				return;
+			}
+			System.out.print("What is the name of the organism? ");
+			String plantName = in.nextLine().toLowerCase();
 			base.getTree().addPlantChild(plantName);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -149,12 +155,23 @@ public class FoodPyramid {
 	 *   The <code>FoodPyramid</code> that is being worked with.
 	 */
 	private static void createAnimalChild(FoodPyramid base) {
-		System.out.print("What is the name of the organism?: ");
-		String animalName = in.nextLine().toLowerCase();
-		System.out.print(
-				"Is the organism an herbivore / a carnivore / an omnivore? (H / C / O) : ");
-		String diet = in.nextLine().toUpperCase();
 		try {
+			//Had to add this because of test case not entering anything after
+			//AC for plant/herbivore organism
+			OrganismNode cursor = base.getTree().getCursor();
+			if(cursor.getIsHerbivore() && !cursor.getIsCarnivore() ||
+		        base.getTree().getCursor().getIsPlant() || cursor.getLeft() != null
+				&& cursor.getMiddle() != null &&
+				cursor.getRight() != null) {
+			  base.getTree().addAnimalChild(" ", true, false);
+			}
+			//This ^ is required for special case 1,2, 5 to not bug out and allow exception
+			//to be thrown from the method and not in this class.
+			System.out.print("What is the name of the organism?: ");
+			String animalName = in.nextLine().toLowerCase();
+			System.out.print(
+			  "Is the organism an herbivore / a carnivore / an omnivore? (H / C / O) : ");
+			String diet = in.nextLine().toUpperCase();
 			switch (diet) {
 				case "H":
 					base.getTree().addAnimalChild(animalName, true, false);
