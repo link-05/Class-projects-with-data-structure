@@ -1,4 +1,5 @@
 import java.lang.StringBuilder;
+import java.util.Scanner;
 /**
  * The <code>OrganismTree</code> class will implement the
  *   <code>OrganismNode</code> for a ternary tree. It will have all
@@ -18,6 +19,10 @@ public class OrganismTree {
 	private OrganismNode cursor;
 	//This flag is for the listFoodChain method
 	private boolean foundFlag = false;
+	//Scanner to use - needed because of special case having AC as an input
+	//but the method needs parameters so changing parameter in the method
+	// is the only way other than checking.
+	private static Scanner in = new Scanner(System.in);
 
 	/**
 	 * Returns an instance of the tree with the <code>apexPredator</code>.
@@ -38,6 +43,22 @@ public class OrganismTree {
 		}
 		root = apexPredator;
 		cursor = apexPredator;
+	}
+
+	/**
+	 * Sets the cursor to the node
+	 * @param node
+	 *   The <code>OrganismNode</code> that <code>cursor</code> will be set to.
+	 */
+	public void setCursor(OrganismNode node) {
+		cursor = node;
+	}
+
+	/**
+	 * Returns the cursor
+	 */
+	public OrganismNode getCursor() {
+		return cursor;
 	}
 
 	/**
@@ -68,20 +89,26 @@ public class OrganismTree {
 		//Ensures that it is not null before calling method on it.
 		if(cursor.getLeft() != null) {
 			if(cursor.getLeft().getName().equalsIgnoreCase(name)) {
-				cursor = cursor.getLeft();
+				setCursor(cursor.getLeft());
+				System.out.println("\nCursor successfully moved to " + name + "!");
+				return;
 			}
-		} else if(cursor.getMiddle() != null) {
-			if(cursor.getMiddle().getName().equalsIgnoreCase(name)) {
-				cursor = cursor.getMiddle();
-			}
-		} else if(cursor.getRight() != null) {
-			if(cursor.getRight().getName().equalsIgnoreCase(name)) {
-				cursor = cursor.getRight();
-			}
-		} else {
-			throw new IllegalArgumentException("\nERROR: This prey does not exist for this predator");
 		}
-		System.out.println("\nCursor successfully moved to " + name + "!");
+		if(cursor.getMiddle() != null) {
+			if(cursor.getMiddle().getName().equalsIgnoreCase(name)) {
+				setCursor(cursor = cursor.getMiddle());
+				System.out.println("\nCursor successfully moved to " + name + "!");
+				return;
+			}
+		}
+		if(cursor.getRight() != null) {
+			if(cursor.getRight().getName().equalsIgnoreCase(name)) {
+				setCursor(cursor.getRight());
+				System.out.println("\nCursor successfully moved to " + name + "!");
+				return;
+			}
+		}
+		throw new IllegalArgumentException("\nERROR: This prey does not exist for this predator");
 	}
 
 	/**
@@ -156,7 +183,9 @@ public class OrganismTree {
 	private void findCursor(OrganismNode predator, StringBuilder sb) {
 		//Returning with recursion and strings did not work...
 		//Backtracking with StringBuilder.
-		if(predator.getName().equals(cursor.getName())) {
+		//Make sure the predator name does not already exist.
+		if(predator.getName().equals(cursor.getName()) &&
+		  sb.indexOf(predator.getName()) == -1) {
 			sb.append(predator.getName());
 			setFoundFlag(true);
 			return;
@@ -165,15 +194,21 @@ public class OrganismTree {
 		//If the found flag is true then it should not enter any of these loops
 		// since it is found already.
 		if(predator.getLeft() != null && !getFoundFlag()) {
-			sb.append(predator.getName()).append(" -> ");
+			if(sb.indexOf(predator.getName()) == -1)
+				sb.append(predator.getName());
+			sb.append(" -> ");
 			findCursor(predator.getLeft(), sb);
 		}
 		if(predator.getMiddle() != null && !getFoundFlag()) {
-			sb.append(predator.getName()).append(" -> ");
+			if(sb.indexOf(predator.getName()) == -1)
+				sb.append(predator.getName());
+			sb.append(" -> ");
 			findCursor(predator.getMiddle(), sb);
 		}
 		if(predator.getRight() != null && !getFoundFlag()) {
-			sb.append(predator.getName()).append(" -> ");
+			if(sb.indexOf(predator.getName()) == -1)
+				sb.append(predator.getName());
+			sb.append(" -> ");
 			findCursor(predator.getRight(), sb);
 		}
 		if(getFoundFlag()) return;
@@ -237,7 +272,10 @@ public class OrganismTree {
 	public String listAllPlants() {
 		StringBuilder sb = new StringBuilder();
 		appendAllPlants(cursor, sb);
-		return sb.substring(0,sb.length() - 2);
+		if(sb.length() > 2)
+			return sb.substring(0,sb.length() - 2);
+		else
+			return " ";
 	}
 
 	/**
@@ -285,8 +323,35 @@ public class OrganismTree {
 	public void addAnimalChild(String name, boolean isHerbivore, boolean isCarnivore)
 			throws IllegalArgumentException, PyramidExceptions.PositionNotAvailableException,
 			  PyramidExceptions.DietMismatchException, PyramidExceptions.IsPlantException {
-		//false is the condition for isPlant which it should not be.
-		OrganismNode temp = new OrganismNode(name, false, isHerbivore, isCarnivore);
+		if(cursor.getIsHerbivore() && !cursor.getIsCarnivore() ||
+				cursor.getIsPlant()) {
+			throw new PyramidExceptions.DietMismatchException();
+		}
+		if(cursor.getLeft() != null && cursor.getMiddle() != null &&
+				cursor.getRight() != null)
+			throw new PyramidExceptions.PositionNotAvailableException();
+		//Need to do this here due to special test cases 1,2, and 5 which will cause problem
+		//if it is not checked first and instead asked for parameter value of name, isHerbivore,
+		// and isCarnivore first.
+		System.out.print("What is the name of the organism?: ");
+		name = in.nextLine().toLowerCase();
+		System.out.print(
+				"Is the organism an herbivore / a carnivore / an omnivore? (H / C / O) : ");
+		String diet = in.nextLine().toUpperCase();
+		OrganismNode temp = new OrganismNode(name,false, false, false);
+		switch (diet) {
+			case "H":
+				temp.setIsHerbivore(true);
+				break;
+			case "C":
+				temp.setIsCarnivore(true);
+				break;
+			case "O":
+				temp.setIsHerbivore(true);
+				temp.setIsCarnivore(true);
+				break;
+		}
+
 		//If empty, set child to temp, otherwise test if the name of it matches existing
 		//if no, continue until finding an empty otherwise throw exception.
 		if(cursor.getLeft() == null) {
@@ -304,8 +369,6 @@ public class OrganismTree {
 		} else if(cursor.getRight().getName().equals(name)) {
 			throw new IllegalArgumentException(
 			  "\nERROR: This prey already exists for this predator");
-		} else {
-			throw new PyramidExceptions.PositionNotAvailableException();
 		}
 		System.out.println("\nA(n) " + name +
 		  " has successfully been added as prey for the " + cursor.getName() + "!");
@@ -330,6 +393,11 @@ public class OrganismTree {
 	public void addPlantChild(String name)
 			throws IllegalArgumentException, PyramidExceptions.PositionNotAvailableException,
 			  PyramidExceptions.DietMismatchException, PyramidExceptions.IsPlantException {
+		if(cursor.getIsPlant()) {
+			throw new PyramidExceptions.IsPlantException();
+		}
+		System.out.print("What is the name of the organism? ");
+		name = in.nextLine().toLowerCase();
 		//true is the condition for isPlant and false is the condition for type of eater.
 		OrganismNode temp = new OrganismNode(name, true, false, false);
 		//If empty, set child to temp, otherwise test if the name of it matches existing
@@ -354,7 +422,7 @@ public class OrganismTree {
 		} else {
 			throw new PyramidExceptions.PositionNotAvailableException();
 		}
-		System.out.println("\nA(n) " + name +
+		System.out.println("\n" + name +
 		  " has successfully been added as prey for the " + cursor.getName() + "!");
 	}
 
@@ -399,6 +467,4 @@ public class OrganismTree {
 		System.out.println("\nA(n) " + name +
 		  " has been successfully removed as prey for the " + cursor.getName() + "!");
 	}
-
-
 }

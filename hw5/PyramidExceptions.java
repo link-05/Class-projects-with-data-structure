@@ -1,5 +1,5 @@
 /**
- * The <code>pyramidException</code> class will implement
+ * The <code>PyramidException</code> class will implement
  *   all the custom exceptions for the <code>OrganismNode</code>.
  *   It extends the <code>Exception</code> class.
  *
@@ -11,6 +11,7 @@
  *    Recitation: R04
  *    TA's: Veronica Oreshko, Kevin Zheng
  */
+
 public class PyramidExceptions {
 	/**
 	 * Returns an instance of <code>PositionNotAvailableException</code>.
@@ -41,7 +42,7 @@ public class PyramidExceptions {
 	 */
 	public static class DietMismatchException extends Exception{
 		public DietMismatchException() {
-			super("\nThis prey cannot be added as it does not match the diet of the predator.");
+			super("\nERROR: This prey cannot be added as it does not match the diet of the predator.");
 		}
 	}
 }

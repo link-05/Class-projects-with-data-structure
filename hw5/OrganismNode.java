@@ -102,12 +102,30 @@ public class OrganismNode {
 	}
 
 	/**
+	 * Set the <code>isHerbivore</code> to <code>isHerb</code>
+	 * @param isHerb
+	 *   The value that determines if organism is a herbivore.
+	 */
+	public void setIsHerbivore(boolean isHerb) {
+		isHerbivore = isHerb;
+	}
+
+	/**
 	 * Returns whether the organism is a carnivore.
 	 * @return
 	 *   A boolean representing whether the organism is a carnivore.
 	 */
 	public boolean getIsCarnivore() {
 		return isCarnivore;
+	}
+
+	/**
+	 * Set the <code>isCarnivore</code> to <code>isCarn</code>
+	 * @param isCarn
+	 *   The value that determines if organism is a carnivore.
+	 */
+	public void setIsCarnivore(boolean isCarn) {
+		isCarnivore = isCarn;
 	}
 
 	/**
@@ -189,9 +207,8 @@ public class OrganismNode {
 			//A plant cannot eat other organisms.
 			throw new PyramidExceptions.IsPlantException();
 		}
-		//If preyNode is a plant and this is a carnivore
-		// or preyNode is an animal and this is a herbivore throw exception.
-		if(preyNode.getIsPlant() && this.getIsCarnivore() || !preyNode.getIsPlant() && this.getIsHerbivore()) {
+		//If preyNode is a plant and this is not a herbivore
+		if(preyNode.getIsPlant() && !this.getIsHerbivore()) {
 			//A carnivore cannot eat plants.
 			throw new PyramidExceptions.DietMismatchException();
 		}
