@@ -40,7 +40,7 @@ public class TextAnalyzer {
 				}
 			}
 			for(File i : directoryOfFiles) {
-				if(i.getName().equalsIgnoreCase("StopWords.txt")) Passage.setStopWordPath(i.getName());
+				if(i.getName().equalsIgnoreCase("StopWords.txt")) Passage.setStopWordPath(i);
 			}
 			for(File i : directoryOfFiles) {
 				if(i.getName().equalsIgnoreCase("StopWords.txt")) continue;
