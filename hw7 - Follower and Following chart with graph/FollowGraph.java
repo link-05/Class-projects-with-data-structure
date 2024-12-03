@@ -1,11 +1,12 @@
 import java.io.*;
 import java.rmi.NoSuchObjectException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.lang.StringBuilder;
 
 /**
- * The <code>FollowerGraph</code> class is the data structure
+ * The <code>FollowGraph</code> class is the data structure
  *   stores all users in this graph up to <code>MAX_USERS</code>.
  *   It can compare and print out all the paths connecting each
  *   <code>User</code> object.
@@ -18,15 +19,24 @@ import java.lang.StringBuilder;
  *    Recitation: R04
  *    TA's: Veronica Oreshko, Kevin Zheng
  */
-public class FollowerGraph implements Serializable {
+public class FollowGraph implements Serializable {
 	private ArrayList<User> users;
 	private static final int MAX_USERS = 100;
 	private boolean[][] connections;
 
 	/**
+	 * Returns the list of all the users in the graph.
+	 * @return
+	 *    Returns the ArrayList of <code>User</code> objects.
+	 */
+	public ArrayList<User> getUsers() {
+		return users;
+	}
+
+	/**
 	 * Returns an instance of Follower Graph.
 	 */
-	public FollowerGraph() {
+	public FollowGraph() {
 		users = new ArrayList<User>();
 		connections = new boolean[MAX_USERS][MAX_USERS];
 	}
@@ -48,13 +58,13 @@ public class FollowerGraph implements Serializable {
 				throw new IllegalArgumentException("Username already exists");
 			}
 		}
-		int count = User.getUserCount();
-		for(int i = 0; i < count; i++) {
-			if(users.get(i) == null) {
-				users.add(i, new User(user, i));
-				return;
-			}
-		}
+//		int count = User.getUserCount();
+//		for(int i = 0; i < count; i++) {
+//			if(users.get(i) == null) {
+//				users.add(i, new User(user, i));
+//				return;
+//			}
+//		}
 		users.add(new User(user));
 	}
 
@@ -183,53 +193,63 @@ public class FollowerGraph implements Serializable {
 		}
 		Integer[][] next = floydWarshallTraversal(from, to);
 		StringBuilder path = new StringBuilder();
+		int userQuantity = 0;
 		if(next[userFromIndex][userToIndex] == null) {
 			return "";
 		}
-		path.append(users.get(userFromIndex) + " -> ");
+		path.append(from);
+		userQuantity++;
 		while(userFromIndex != userToIndex) {
 			userFromIndex = next[userFromIndex][userToIndex];
-			path.append(users.get(userFromIndex) + " -> ");
+			path.append(" -> ").append(users.get(userFromIndex).getUserName());
+			userQuantity++;
 		}
-		return path.toString().substring(0, path.toString().length() - 4);
+		return (path.toString() + userQuantity);
 	}
 
 
+	/**
+	 * Find all the paths between the users, and returns an ArrayList of Strings representing
+	 *   these paths.
+	 * <dt> Precondition:
+	 *   <dd> The user has to exist in the list.
+	 * @param from
+	 *    The <code>User</code> that the path starts at.
+	 * @param to
+	 *    The <code>User</code> that the path ends at.
+	 * @return
+	 *    Returns an ArrayList of Strings that represents all the paths
+	 *      between <code>from</code> and <code>to</code>.
+	 * @throws IllegalArgumentException
+	 *    Indicates that the user does not exist.
+	 */
 	public ArrayList<String> allPaths(String from, String to) {
-		//Checks if the users exist first
-		int userFromIndex = -1;
-		int userToIndex = -1;
+		ArrayList<String> loops = new ArrayList<String>();
+		//Loops will be found by using Depth First Traversal
+		int count = User.getUserCount();
+		int fromIndex = -1;
+		int toIndex = -1;
 		for(User user: users) {
-			if(user.getUserName().equalsIgnoreCase(from)) {
-				userFromIndex = user.getIndexPos();
-			}
-			if(user.getUserName().equalsIgnoreCase(to)) {
-				userToIndex = user.getIndexPos();
-			}
-		}
-		if(userFromIndex == -1 || userToIndex == -1) {
-			throw new IllegalArgumentException("Users are not valid.");
-		}
-		//Use Floyd Warshall's shortest path algorithm to create a 2d array that has all the paths from and to.
-		Integer[][] next = floydWarshallTraversal(from, to);
-		int v = User.getUserCount();
-		ArrayList<String> paths = new ArrayList<String>();
-		StringBuilder path = new StringBuilder();
-		for(int i = 0; i < v; i++) {
-			if(next[userFromIndex][i] == null) {
-				continue;
-			}
-			if (userFromIndex != i) {
-				while(userFromIndex != i) {
-					userFromIndex = next[userFromIndex][i];
-					path.append(users.get(userFromIndex).getUserName());
+			if(user != null) {
+				if(user.getUserName().equalsIgnoreCase(from)) {
+					fromIndex = user.getIndexPos();
 				}
-				paths.add(path.toString());
+				if(user.getUserName().equalsIgnoreCase(to)) {
+					toIndex = user.getIndexPos();
+				}
 			}
 		}
-		return paths;
+		boolean[] marked = new boolean[count];
+		ArrayList<String> path = new ArrayList<String>();
+		DFT(this, loops, path, toIndex, fromIndex, marked);
+		return loops;
 	}
 
+	/**
+	 * Print all the users in the graph, order is based on comparator.
+	 * @param type
+	 *   The comparator that will be used to sort the users.
+	 */
 	public void printAllUsers(Comparator type) {
 		ArrayList<User> tempArr = new ArrayList<User>();
 		updateAllFollowerFollowing();
@@ -239,12 +259,20 @@ public class FollowerGraph implements Serializable {
 			}
 			tempArr.add(u);
 		}
+		if(type instanceof FollowerComparator || type instanceof FollowingComparator) {
+			tempArr.sort(new NameComparator());
+		}
 		tempArr.sort(type);
 		for(User u: tempArr) {
-			System.out.printf("%-32s%-23s%-23s\n", u.getUserName(), u.getFollowerCount(), u.getFollowingCount());
+			System.out.printf("%-41s%-21s%s\n", u.getUserName(), u.getFollowerCount(), u.getFollowingCount());
 		}
 	}
 
+	/**
+	 * Print all the user's follower connections in the graph.
+	 * @param user
+	 *    The user that will have all follower printed.
+	 */
 	public void printAllFollowers(String user) {
 		int index = -1;
 		for(User u: users) {
@@ -264,6 +292,11 @@ public class FollowerGraph implements Serializable {
 		}
 	}
 
+	/**
+	 * Print all the user's following connections in the graph.
+	 * @param user
+	 *    The user that will have all following printed.
+	 */
 	public void printAllFollowing(String user) {
 		int index = -1;
 		for(User u: users) {
@@ -283,15 +316,19 @@ public class FollowerGraph implements Serializable {
 		}
 	}
 
+	/**
+	 * Find all the loops in the graph, and returns an ArrayList of Strings representing
+	 *   these loops.
+	 * @return
+	 *    Returns an ArrayList of Strings that represents all the loops in the graph.
+	 */
 	public ArrayList<String> findAllLoops() {
 		ArrayList<String> loops = new ArrayList<String>();
 		//Loops will be found by using Depth First Traversal
 		int count = User.getUserCount();
-		for(int i = 0; i < count; i++) {
-			boolean[] marked = new boolean[count];
-			ArrayList<String> path = new ArrayList<String>();
-			DFT(this, loops, path, i, i, marked);
-		}
+		boolean[] marked = new boolean[count];
+		ArrayList<String> path = new ArrayList<String>();
+		DFT(this, loops, path, 0, 0, marked);
 		return loops;
 	}
 
@@ -307,29 +344,37 @@ public class FollowerGraph implements Serializable {
 	 * @param marked
 	 *   The boolean array that will keep track of the users that have been visited.
 	 */
-	private static void DFT(FollowerGraph g, ArrayList<String> loops, ArrayList<String> path, int mainTarget,
+	private static void DFT(FollowGraph g, ArrayList<String> loops, ArrayList<String> path, int mainTarget,
 	  int currentUser, boolean[] marked) {
 		//This is based off the CSE214, DFT method in the unit 10 lecture slides.
 		int[] connections = fillConnection(g, currentUser);
-		int i;
 		int nextNeighbor;
-		marked[currentUser] = true;
-		for (i=0; i<connections.length; i++) {
+		path.add(g.getUsers().get(currentUser).getUserName());
+		if(currentUser != mainTarget) {
+			marked[currentUser] = true;
+		}
+		for (int i=0; i<connections.length; i++) {
+			if(connections[i] == -1) {
+				break;
+			}
 			nextNeighbor = connections[i];
 			if(nextNeighbor == mainTarget) {
 				//This will add the path to the loop
 				StringBuilder sb = new StringBuilder();
 				for(String user: path) {
-					sb.append(user + " -> ");
+					sb.append(user).append(" -> ");
 				}
-				loops.add(path.toString().substring(0, path.toString().length() - 4));
-				continue;
+				if(sb.toString().length() > 0) {
+					sb.append(g.getUsers().get(mainTarget).getUserName());
+					loops.add(sb.toString());
+				}
 			}
-			if (!marked[nextNeighbor]) {
+			else if (!marked[nextNeighbor]) {
 				DFT(g, loops, path, mainTarget, nextNeighbor, marked);
-				path.removeLast();
 			}
 		}
+		path.remove(path.size() - 1);
+		marked[currentUser] = false;
 	}
 
 	/**
@@ -341,21 +386,29 @@ public class FollowerGraph implements Serializable {
 	 * @return
 	 *    Returns an array of connections.
 	 */
-	private static int[] fillConnection(FollowerGraph g, int user) {
+	private static int[] fillConnection(FollowGraph g, int user) {
 		int count = User.getUserCount();
+		ArrayList<User> list = new ArrayList<User>();
 		int[] connection = new int[count];
+		for(int i = 0; i < count; i++) {
+			connection[i] = -1;
+		}
 		int index = 0;
+		ArrayList<User> users = g.getUsers();
 		for(int i = 0; i < count; i++) {
 			if(g.getConnections()[user][i]) {
-				connection[index] = i;
-				index++;
+				list.add(users.get(i));
 			}
+		}
+		list.sort(new NameComparator());
+		for(int i = 0; i < list.size(); i++) {
+			connection[i] = list.get(i).getIndexPos();
 		}
 		return connection;
 	}
 
 	/**
-	 * Returns the connections of the <code>FollowerGraph</code>.
+	 * Returns the connections of the <code>FollowGraph</code>.
 	 * @return
 	 *   Returns the 2d boolean array that represents the connections.
 	 */
@@ -372,6 +425,13 @@ public class FollowerGraph implements Serializable {
 		}
 	}
 
+	/**
+	 * Load all the connections from a file.
+	 * @param fileName
+	 *    The name of the file that will be loaded.
+	 * @throws IOException
+	 *    Indicates that the file is not found.
+	 */
 	public void loadAllConnections(String fileName) throws IOException {
 		BufferedReader bf = new BufferedReader(new FileReader(fileName));
 		String line = "";
@@ -384,11 +444,12 @@ public class FollowerGraph implements Serializable {
 				if(user == null) continue;
 				if(user.getUserName().equalsIgnoreCase(fromTo[0])) {
 					indexFrom = user.getIndexPos();
-				} else if(user.getUserName().equalsIgnoreCase(fromTo[1])) {
+				}
+				if(user.getUserName().equalsIgnoreCase(fromTo[1])) {
 					indexTo = user.getIndexPos();
 				}
 			}
-			if(indexFrom == -1 || indexTo == -1) throw new NoSuchObjectException(line + " does not exist.");
+			if(indexFrom == -1 || indexTo == -1) continue;
 			connections[indexFrom][indexTo] = true;
 			System.out.println(line + " added");
 		}
@@ -406,23 +467,24 @@ public class FollowerGraph implements Serializable {
 	 */
 	private Integer[][] floydWarshallTraversal(String from, String to) {
 		//Floyd-Warshall Algorithm based from the CSE214 Homework html example - wikipedia.
-		int v = User.getUserCount();
-		double[][] dist = new double[v][v];
-		Integer[][] next = new Integer[v][v];
-		for(int i = 0; i < v; i++) {
-			for(int j = 0; j < v; j++) {
-				if(connections[i][j]) {
+		int v = MAX_USERS;
+		double[][] dist = new double[MAX_USERS][MAX_USERS];
+		Integer[][] next = new Integer[MAX_USERS][MAX_USERS];
+		for(int i = 0; i < MAX_USERS; i++) {
+			for(int j = 0; j < MAX_USERS; j++) {
+				if(i == j) {
+					dist[i][j] = 0;
+				} else if (connections[i][j]) {
 					dist[i][j] = 1;
-					next[i][j] = j;
 				} else {
 					dist[i][j] = Double.POSITIVE_INFINITY;
-					next[i][j] = null;
 				}
+				next[i][j] = j;
 			}
 		}
-		for(int k = 1; k < v; k++) {
-			for(int i = 1; i < v; i++) {
-				for(int j = 1; j < v; j++) {
+		for(int k = 0; k < MAX_USERS; k++) {
+			for(int i = 0; i < MAX_USERS; i++) {
+				for(int j = 0; j < MAX_USERS; j++) {
 					if(dist[i][k] + dist[k][j] < dist[i][j]) {
 						// if the sum of the two is less than the current value then it is the current shortest path
 						dist[i][j] = dist[k][j] + dist[i][k];
